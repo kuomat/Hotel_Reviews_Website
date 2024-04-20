@@ -1,9 +1,7 @@
 {
-  "rds_host": "hotelsdatabase.cb2wyaissnhu.us-east-1.rds.amazonaws.com",
+  "rds_host": "hotelsdatabase.cb2wyaissbhu.us-east-1.rds.amazonaws.com",
   "rds_port": "3306",
-  "rds_user": "admin",
+  "rds_user": "group14db",
   "rds_password": "Gr0up14DB",
-  "rds_db": "group14db",
-  "server_host": "localhost",
-  "server_port": "8080"
+  "rds_db": "hotelsdatabase"
 }
