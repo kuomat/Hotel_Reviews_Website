@@ -14,11 +14,12 @@ app.get("/", (req, res) => {
 
 app.get('/avgScoresMonth', routes.average_scores_by_month_year);
 app.get('/avgScoresCategories', routes.average_scores_by_categories);
-app.get('/reviews', routes.reviewsPerHotel);
-app.get('/tophotels/:year', routes.topHotels);
-app.get('/mostImproved', routes.mostImproved);
+app.get('/reviews', routes.reviews_per_hotel);
+app.get('/tophotels/:year', routes.top_hotels);
+app.get('/mostImproved', routes.most_improved);
 app.get('/reviewDistribution', routes.distribution);
-
+app.get('/search', routes.search);
+app.get('/:hotelName', routes.hotel);
 
 // Start the server
 app.listen(port, () => {
