@@ -13,13 +13,125 @@ const connection = mysql.createConnection({
 connection.connect((err) => err && console.log(err));
 
 // Route 1
+//GET /recentReviews/:hotelname
+const recent_reviews = async function (req, res) {
+  const hotelName = req.params.hotelname;
+  const sqlQuery = `
+  SELECT a.hotel_name, f.date, f.review, f.overall_score
+  FROM address_df a JOIN final_df f ON a.address = f.address
+  INNER JOIN (
+    SELECT address, MAX(date) AS max_date
+    FROM final_df
+    WHERE a.hotel_name = '${hotelName}'
+    GROUP BY address
+  ) AS latest ON f.address = latest.address AND f.date = latest.max_date
+  WHERE a.hotel_name = '${hotelName}'
+  ORDER BY a.hotel_name, f.date DESC;
+`;
+  
+
+  connection.query(sqlQuery, (err, results) => {
+    if (err || data.length === 0) {
+      res.status(404).json({'error': err});
+    } else {
+      const mappedResults = results.map(result => ({
+        hotel_name: result.hotel_name,
+        date: result.date,
+        review: result.review,
+        overall_score: result.overall_score,
+      }));
+      res.status(200).json(mappedResults);
+    }
+  });
+
+}
 
 // Route 2
+// GET /bestCategHotel
+const hotels_with_best_categ_score = async function (req, res) {
+
+  const sqlQuery = `
+  (SELECT 'Service' AS category, a.hotel_name, AVG(f.service_score) AS avg_score
+  FROM address_df a JOIN final_df f ON a.address = f.address
+  GROUP BY a.hotel_name
+  ORDER BY avg_score DESC
+  LIMIT 1)
+  UNION ALL
+  (SELECT 'Cleanliness' AS category, a.hotel_name, AVG(f.cleanliness_score) AS avg_score
+  FROM address_df a JOIN final_df f ON a.address = f.address
+  GROUP BY a.hotel_name
+  ORDER BY avg_score DESC
+  LIMIT 1)
+  UNION ALL
+  (SELECT 'Value' AS category, a.hotel_name, AVG(f.value_score) AS avg_score
+  FROM address_df a JOIN final_df f ON a.address = f.address
+  GROUP BY a.hotel_name
+  ORDER BY avg_score DESC
+  LIMIT 1);
+`;
+
+  connection.query(sqlQuery, (err, results) => {
+    if (err || results.length === 0) {
+      res.status(404).json({'error': err});
+    } else {
+      const mappedResults = results.map(result => ({
+        category: result.category,
+        hotel_name: result.hotel_name,
+        avg_score: result.avg_score,
+      }));
+      res.status(200).json(mappedResults);
+    }
+  });
+}
 
 // Route 3
+//GET /geographicalArea
+const geographical_area = async function (req, res) {
+
+  const sqlQuery = `
+  SELECT ROUND(a.lat,1) AS lat_rounded, ROUND(a.LNG,1) AS lng_rounded, AVG(f.overall_score) AS average_rating
+  FROM address_df a JOIN final_df f ON a.address = f.address
+  GROUP BY lat_rounded, lng_rounded;
+  `;
+
+  connection.query(sqlQuery, (err, results) => {
+    if (err || results.length === 0) {
+      res.status(404).json({'error': err});
+    } else {
+      const mappedResults = results.map(result => ({
+        lat_rounded: result.lat_rounded,
+        lng_rounded: result.lng_rounded,
+        average_rating: result.average_rating,
+      }));
+      res.status(200).json(mappedResults);
+    }
+  });
+}
 
 // Route 4
+//GET /hotelsScore/:rating
+const hotels_score = async function (req, res) {
+  const rating = req.params.rating;
+  const sqlQuery = `
+  SELECT a.hotel_name, AVG(f.overall_score) AS average_rating
+  FROM address_df a JOIN final_df f ON a.address = f.address
+  GROUP BY a.hotel_name
+  HAVING AVG(f.overall_score) > ${rating}    
+  `;
 
+  connection.query(sqlQuery, (err, results) => {
+    if (err || results.length === 0) {
+      res.status(404).json({'error': err});
+    } else {
+      const mappedResults = results.map(result => ({
+        hotel_name: result.hotel_name,
+        average_rating: result.average_rating,
+      }));
+      res.status(200).json(mappedResults);
+    }
+  });
+ 
+}
 // Route 5
 // GET /avgScoresMonth
 const average_scores_by_month_year = async function (req, res){
@@ -267,6 +379,10 @@ const hotel = async function(req, res) {
 }
 
 module.exports = {
+  recent_reviews,
+  hotels_with_best_categ_score,
+  geographical_area,
+  hotels_score,
   average_scores_by_month_year,
   average_scores_by_categories,
   reviews_per_hotel,
@@ -275,4 +391,5 @@ module.exports = {
   distribution,
   search,
   hotel
+  
 }
