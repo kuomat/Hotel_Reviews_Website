@@ -13,66 +13,91 @@ const connection = mysql.createConnection({
 connection.connect((err) => err && console.log(err));
 
 // Route 1
-//GET /recentReviews/:hotelname
-const recent_reviews = async function (req, res) {
-  const hotelName = req.params.hotelname;
-  const beforeOptimization = `
-    SELECT a.hotel_name, f.date, f.review, f.overall_score
-    FROM address_cleaned a JOIN final_cleaned f ON a.address = f.address
-    INNER JOIN (
-      SELECT address, MAX(date) AS max_date
-      FROM final_cleaned
-      WHERE a.hotel_name = '${hotelName}'
-      GROUP BY address
-    ) AS latest ON f.address = latest.address AND f.date = latest.max_date
-    WHERE a.hotel_name = '${hotelName}'
-    ORDER BY a.hotel_name, f.date DESC;
-  `;
+// 1 second
+// GET /:hotelName
+const hotel = async function (req, res) {
+  const hotelName = req.params.hotelName;
+  var sql = `SELECT * FROM final_cleaned f
+  JOIN address_cleaned a ON f.address = a.address
+  WHERE a.hotel_name = '${hotelName}'
+  LIMIT 1;`;
 
-  connection.query(beforeOptimization, (err, results) => {
-    if (err || results.length === 0) {
+  connection.query(sql, (err, results) => {
+    if (err) {
       res.status(404).json({ error: err });
     } else {
-      const mappedResults = results.map((result) => ({
-        hotel_name: result.hotel_name,
+      const mappedData = results.map((result) => ({
         date: result.date,
-        review: result.review,
         overall_score: result.overall_score,
+        service_score: result.service_score,
+        cleanliness_score: result.cleanliness_score,
+        value_score: result.value_score,
+        location_score: result.location_score,
+        sleep_quality_score: result.sleep_quality_score,
+        rooms_score: result.rooms_score,
       }));
-      res.status(200).json(mappedResults);
+      res.status(200).json(mappedData);
     }
   });
 };
 
 // Route 2
-// 10 seconds
+// 16.91 seconds
 // GET /bestCategHotel
+//// Create indexes like this:
+// CREATE INDEX idx_address_cleaned_address ON address_cleaned(address);
+// CREATE INDEX idx_final_cleaned_address ON final_cleaned(address);
+
 const hotels_with_best_categ_score = async function (req, res) {
+  // const sqlQuery = `
+  //   (
+  //     SELECT 'Service' AS category, a.hotel_name, AVG(f.service_score) AS avg_score
+  //     FROM address_cleaned a JOIN final_cleaned f ON a.address = f.address
+  //     GROUP BY a.hotel_name
+  //     ORDER BY avg_score DESC
+  //     LIMIT 1
+  //   )
+  //   UNION ALL
+  //   (
+  //     SELECT 'Cleanliness' AS category, a.hotel_name, AVG(f.cleanliness_score) AS avg_score
+  //     FROM address_cleaned a JOIN final_cleaned f ON a.address = f.address
+  //     GROUP BY a.hotel_name
+  //     ORDER BY avg_score DESC
+  //     LIMIT 1
+  //   )
+  //   UNION ALL
+  //   (
+  //     SELECT 'Value' AS category, a.hotel_name, AVG(f.value_score) AS avg_score
+  //     FROM address_cleaned a JOIN final_cleaned f ON a.address = f.address
+  //     GROUP BY a.hotel_name
+  //     ORDER BY avg_score DESC
+  //     LIMIT 1
+  //   );`;
+
   const sqlQuery = `
     (
-      SELECT 'Service' AS category, a.hotel_name, AVG(f.service_score) AS avg_score
-      FROM address_cleaned a JOIN final_cleaned f ON a.address = f.address
-      GROUP BY a.hotel_name
-      ORDER BY avg_score DESC
-      LIMIT 1
-    )
-    UNION ALL
-    (
-      SELECT 'Cleanliness' AS category, a.hotel_name, AVG(f.cleanliness_score) AS avg_score
-      FROM address_cleaned a JOIN final_cleaned f ON a.address = f.address
-      GROUP BY a.hotel_name
-      ORDER BY avg_score DESC
-      LIMIT 1
-    )
-    UNION ALL
-    (
-      SELECT 'Value' AS category, a.hotel_name, AVG(f.value_score) AS avg_score
-      FROM address_cleaned a JOIN final_cleaned f ON a.address = f.address
-      GROUP BY a.hotel_name
-      ORDER BY avg_score DESC
-      LIMIT 1
-    );
-  `;
+      WITH joined AS (
+        SELECT a.hotel_name AS hotel_name, AVG(f.service_score) AS service_score, AVG(f.cleanliness_score) AS cleanliness_score, AVG(f.value_score) AS value_score
+        FROM address_cleaned a JOIN final_cleaned f ON a.address = f.address
+        GROUP BY a.hotel_name
+      )
+      (
+        SELECT 'Service' AS category, joined.hotel_name AS hotel_name, joined.service_score AS avg_score
+        FROM joined
+        ORDER BY avg_score DESC
+        LIMIT 1
+      ) UNION ALL (
+        SELECT 'Cleanliness' AS category, joined.hotel_name AS hotel_name, joined.cleanliness_score AS avg_score
+        FROM joined
+        ORDER BY avg_score DESC
+        LIMIT 1
+      ) UNION ALL (
+        SELECT 'Value' AS category, joined.hotel_name AS hotel_name, joined.value_score AS avg_score
+        FROM joined
+        ORDER BY avg_score DESC
+        LIMIT 1
+      )
+    )`;
 
   connection.query(sqlQuery, (err, results) => {
     if (err || results.length === 0) {
@@ -113,7 +138,7 @@ const geographical_area = async function (req, res) {
 };
 
 // Route 4
-// 1 second
+// 5 seconds
 //GET /hotelsScore/:rating
 const hotels_score = async function (req, res) {
   const rating = req.params.rating;
@@ -121,7 +146,7 @@ const hotels_score = async function (req, res) {
     SELECT a.hotel_name, AVG(f.overall_score) AS average_rating
     FROM address_cleaned a JOIN final_cleaned f ON a.address = f.address
     GROUP BY a.hotel_name
-    HAVING AVG(f.overall_score) > ${rating}    
+    HAVING AVG(f.overall_score) > ${rating}
   `;
 
   connection.query(sqlQuery, (err, results) => {
@@ -138,7 +163,7 @@ const hotels_score = async function (req, res) {
 };
 
 // Route 5
-// 6.86 seconds
+// 9 seconds
 // GET /avgScoresMonth
 const average_scores_by_month_year = async function (req, res) {
   const sql = `SELECT
@@ -176,7 +201,7 @@ const average_scores_by_month_year = async function (req, res) {
 };
 
 // Route 6
-// 1 second
+// 7 seconds
 // GET /avgScoresCategories
 const average_scores_by_categories = async function (req, res) {
   const sql = `SELECT
@@ -211,7 +236,7 @@ const average_scores_by_categories = async function (req, res) {
 };
 
 // Route 7
-// 1 second
+// 5.68 seconds
 // GET /reviews
 const reviews_per_hotel = async function (req, res) {
   const sql = `SELECT a.hotel_name, COUNT(f.primary_key) AS review_count
@@ -264,7 +289,7 @@ const top_hotels = async function (req, res) {
 };
 
 // Route 9
-// 2.5 seconds
+// 12.5 seconds
 // GET /mostImproved
 const most_improved = async function (req, res) {
   const sql = `SELECT year_current.hotel_name, (year_current.avg_score - year_previous.avg_score) AS improvement
@@ -316,6 +341,7 @@ const distribution = async function (req, res) {
   });
 };
 
+
 // GET /search
 const search = async function (req, res) {
   let { name, location, minRating } = req.body;
@@ -359,35 +385,7 @@ const search = async function (req, res) {
   });
 };
 
-// GET /:hotelName
-const hotel = async function (req, res) {
-  const hotelName = req.params.hotelName;
-  var sql = `SELECT * FROM final_cleaned f 
-  JOIN address_cleaned a ON f.address = a.address
-  WHERE a.hotel_name = '${hotelName}'
-  LIMIT 1;`;
-
-  connection.query(sql, (err, results) => {
-    if (err) {
-      res.status(404).json({ error: err });
-    } else {
-      const mappedData = results.map((result) => ({
-        date: result.date,
-        overall_score: result.overall_score,
-        service_score: result.service_score,
-        cleanliness_score: result.cleanliness_score,
-        value_score: result.value_score,
-        location_score: result.location_score,
-        sleep_quality_score: result.sleep_quality_score,
-        rooms_score: result.rooms_score,
-      }));
-      res.status(200).json(mappedData);
-    }
-  });
-};
-
 module.exports = {
-  recent_reviews,
   hotels_with_best_categ_score,
   geographical_area,
   hotels_score,
@@ -398,5 +396,5 @@ module.exports = {
   most_improved,
   distribution,
   search,
-  hotel,
+  hotel
 };
