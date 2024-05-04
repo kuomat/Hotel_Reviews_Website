@@ -140,13 +140,19 @@ const geographical_area = async function (req, res) {
 // Route 4
 // 5 seconds
 //GET /hotelsScore/:rating
-const hotels_score = async function (req, res) {
+const hotels_max_num_reviews = async function (req, res) {
   const rating = req.params.rating;
   const sqlQuery = `
-    SELECT a.hotel_name, AVG(f.overall_score) AS average_rating
-    FROM address_cleaned a JOIN final_cleaned f ON a.address = f.address
-    GROUP BY a.hotel_name
-    HAVING AVG(f.overall_score) > ${rating}
+  SELECT
+      hotel_name AS Hotel,
+      COUNT(*) AS Number_of_Reviews
+  FROM
+      joinedViewNewData
+  GROUP BY
+      hotel_name
+  ORDER BY
+      Number_of_Reviews DESC
+  LIMIT 10;
   `;
 
   connection.query(sqlQuery, (err, results) => {
