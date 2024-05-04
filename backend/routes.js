@@ -17,16 +17,19 @@ connection.connect((err) => err && console.log(err));
 // GET /:hotelName
 const hotel = async function (req, res) {
   const hotelName = req.params.hotelName;
-  var sql = `SELECT * FROM final_cleaned f
-  JOIN address_cleaned a ON f.address = a.address
-  WHERE a.hotel_name = '${hotelName}'
-  LIMIT 1;`;
+  var sql = `SELECT * FROM final_cleaned2 f
+  JOIN address_cleaned2 a ON f.address = a.address
+  WHERE a.hotel_name = '${hotelName}';`;
 
   connection.query(sql, (err, results) => {
     if (err) {
       res.status(404).json({ error: err });
     } else {
       const mappedData = results.map((result) => ({
+        address: result.address,
+        lat: result.lat,
+        lng: result.lng,
+        review: result.review,
         date: result.date,
         overall_score: result.overall_score,
         service_score: result.service_score,
@@ -78,7 +81,7 @@ const hotels_with_best_categ_score = async function (req, res) {
     (
       WITH joined AS (
         SELECT a.hotel_name AS hotel_name, AVG(f.service_score) AS service_score, AVG(f.cleanliness_score) AS cleanliness_score, AVG(f.value_score) AS value_score
-        FROM address_cleaned a JOIN final_cleaned f ON a.address = f.address
+        FROM address_cleaned2 a JOIN final_cleaned2 f ON a.address = f.address
         GROUP BY a.hotel_name
       )
       (
@@ -119,7 +122,7 @@ const hotels_with_best_categ_score = async function (req, res) {
 const geographical_area = async function (req, res) {
   const sqlQuery = `
   SELECT ROUND(a.lat,1) AS lat_rounded, ROUND(a.LNG,1) AS lng_rounded, AVG(f.overall_score) AS average_rating
-  FROM address_cleaned a JOIN final_cleaned f ON a.address = f.address
+  FROM address_cleaned2 a JOIN final_cleaned2 f ON a.address = f.address
   GROUP BY lat_rounded, lng_rounded;
   `;
 
@@ -144,7 +147,7 @@ const hotels_score = async function (req, res) {
   const rating = req.params.rating;
   const sqlQuery = `
     SELECT a.hotel_name, AVG(f.overall_score) AS average_rating
-    FROM address_cleaned a JOIN final_cleaned f ON a.address = f.address
+    FROM address_cleaned2 a JOIN final_cleaned2 f ON a.address = f.address
     GROUP BY a.hotel_name
     HAVING AVG(f.overall_score) > ${rating}
   `;
@@ -172,9 +175,9 @@ const average_scores_by_month_year = async function (req, res) {
     EXTRACT(MONTH FROM STR_TO_DATE(f.date, '%m/%d/%Y')) AS review_month,
     AVG(f.overall_score) AS average_score
   FROM
-    address_cleaned a
+    address_cleaned2 a
   JOIN
-    final_cleaned f ON a.address = f.address
+    final_cleaned2 f ON a.address = f.address
   GROUP BY
     a.hotel_name,
     review_year,
@@ -202,19 +205,21 @@ const average_scores_by_month_year = async function (req, res) {
 
 // Route 6
 // 7 seconds
-// GET /avgScoresCategories
+// GET /:hotel/avgScoresCategories
 const average_scores_by_categories = async function (req, res) {
+  const hotel = req.params.hotel;
   const sql = `SELECT
     a.hotel_name,
+    AVG(f.overall_score) AS avg_overall_score,
     AVG(f.service_score) AS avg_service_score,
     AVG(f.cleanliness_score) AS avg_cleanliness_score,
     AVG(f.value_score) AS avg_value_score,
     AVG(f.location_score) AS avg_location_score,
     AVG(f.sleep_quality_score) AS avg_sleep_quality_score,
     AVG(f.rooms_score) AS avg_rooms_score
-  FROM address_cleaned a
-  JOIN final_cleaned f ON a.address = f.address
-  GROUP BY a.hotel_name;
+  FROM address_cleaned2 a
+  JOIN final_cleaned2 f ON a.address = f.address
+  WHERE a.hotel_name = '${hotel}';
   `;
 
   connection.query(sql, (err, results) => {
@@ -223,6 +228,7 @@ const average_scores_by_categories = async function (req, res) {
     } else {
       const mappedData = results.map((result) => ({
         hotel_name: result.hotel_name,
+        avg_overall_score: result.avg_overall_score,
         avg_service_score: result.avg_service_score,
         avg_cleanliness_score: result.avg_cleanliness_score,
         avg_value_score: result.avg_value_score,
@@ -237,12 +243,13 @@ const average_scores_by_categories = async function (req, res) {
 
 // Route 7
 // 5.68 seconds
-// GET /reviews
+// GET /:hotel/reviews
 const reviews_per_hotel = async function (req, res) {
+  const hotel = req.params.hotel;
   const sql = `SELECT a.hotel_name, COUNT(f.primary_key) AS review_count
-  FROM address_cleaned a
-  JOIN final_cleaned f ON a.address = f.address
-  GROUP BY a.hotel_name
+  FROM address_cleaned2 a
+  JOIN final_cleaned2 f ON a.address = f.address
+  WHERE a.hotel_name = '${hotel}'
   ORDER BY review_count DESC;`;
 
   connection.query(sql, (err, results) => {
@@ -267,8 +274,8 @@ const top_hotels = async function (req, res) {
     a.hotel_name,
     COUNT(f.review) AS review_count,
     YEAR(STR_TO_DATE(f.date, '%m/%d/%Y')) AS review_year
-    FROM address_cleaned a
-    JOIN final_cleaned f ON a.address = f.address
+    FROM address_cleaned2 a
+    JOIN final_cleaned2 f ON a.address = f.address
     WHERE YEAR(STR_TO_DATE(f.date, '%m/%d/%Y')) = '${year}'
     GROUP BY a.hotel_name
     ORDER BY review_count DESC
@@ -294,12 +301,12 @@ const top_hotels = async function (req, res) {
 const most_improved = async function (req, res) {
   const sql = `SELECT year_current.hotel_name, (year_current.avg_score - year_previous.avg_score) AS improvement
   FROM (SELECT a.hotel_name, YEAR(STR_TO_DATE(f.date, '%m/%d/%Y')) AS year, AVG(f.overall_score) AS avg_score
-        FROM address_cleaned a
-        JOIN final_cleaned f ON a.address = f.address
+        FROM address_cleaned2 a
+        JOIN final_cleaned2 f ON a.address = f.address
         GROUP BY a.hotel_name, YEAR(STR_TO_DATE(f.date, '%m/%d/%Y'))) year_current
   JOIN (SELECT a.hotel_name, YEAR(STR_TO_DATE(f.date, '%m/%d/%Y')) AS year, AVG(f.overall_score) AS avg_score
-        FROM address_cleaned a
-        JOIN final_cleaned f ON a.address = f.address
+        FROM address_cleaned2 a
+        JOIN final_cleaned2 f ON a.address = f.address
         GROUP BY a.hotel_name, YEAR(STR_TO_DATE(f.date, '%m/%d/%Y'))) year_previous
   ON year_current.hotel_name = year_previous.hotel_name
   WHERE year_current.year = year_previous.year + 1
@@ -324,7 +331,7 @@ const most_improved = async function (req, res) {
 // GET /reviewDistribution
 const distribution = async function (req, res) {
   const sql = `SELECT f.overall_score, COUNT(*) AS number_of_reviews
-  FROM final_cleaned f
+  FROM final_cleaned2 f
   GROUP BY f.overall_score
   ORDER BY f.overall_score;`;
 
@@ -346,7 +353,7 @@ const distribution = async function (req, res) {
 const search = async function (req, res) {
   let { name, location, minRating } = req.body;
   var sql = `SELECT a.hotel_name, a.address, f.overall_score
-  FROM final_cleaned f JOIN address_cleaned a ON f.address = a.address WHERE`;
+  FROM final_2 f JOIN address_cleaned2 a ON f.address = a.address WHERE`;
 
   if (!name && !location && !minRating) {
     res.status(400).json({ error: 'Invalid request' });

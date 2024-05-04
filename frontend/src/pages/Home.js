@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom';
+import HotelComponent from '../components/HotelComponent';
+
 
 export default function NavigateButtons() {
     const navigate = useNavigate();
@@ -6,6 +8,8 @@ export default function NavigateButtons() {
     const handleNavigation = (path) => {
         navigate(path);
     };
+
+    const hotelName = 'Belfast';
 
     return (
         <div className='w-screen h-screen flex flex-col items-center justify-center space-y-4'>
@@ -19,6 +23,7 @@ export default function NavigateButtons() {
             <button onClick={() => handleNavigation('/page8')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Go to Page 8</button>
             <button onClick={() => handleNavigation('/page9')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Go to Page 9</button>
             <button onClick={() => handleNavigation('/page10')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Go to Page 10</button>
+            <HotelComponent hotelName={hotelName}></HotelComponent>
         </div>
     );
 }
