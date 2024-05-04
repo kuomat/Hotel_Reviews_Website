@@ -7,7 +7,6 @@ const port = process.env.PORT || 8080;
 app.use(express.json());
 // Add any other middleware here (e.g., cors, body-parser)
 
-
 app.get('/bestCategHotel', routes.hotels_with_best_categ_score);
 app.get('/geographicalArea', routes.geographical_area);
 app.get('/hotelsScore/:rating', routes.hotels_score);
