@@ -243,7 +243,8 @@ const reviews_per_hotel = async function (req, res) {
   FROM address_cleaned a
   JOIN final_cleaned f ON a.address = f.address
   GROUP BY a.hotel_name
-  ORDER BY review_count DESC;`;
+  ORDER BY review_count DESC
+  LIMIT 10;`;
 
   connection.query(sql, (err, results) => {
     if (err) {
@@ -326,7 +327,8 @@ const distribution = async function (req, res) {
   const sql = `SELECT f.overall_score, COUNT(*) AS number_of_reviews
   FROM final_cleaned f
   GROUP BY f.overall_score
-  ORDER BY f.overall_score;`;
+  ORDER BY f.overall_score
+  LIMIT 10;`;
 
   connection.query(sql, (err, results) => {
     if (err) {
