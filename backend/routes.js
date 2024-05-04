@@ -139,9 +139,8 @@ const geographical_area = async function (req, res) {
 
 // Route 4
 // 5 seconds
-//GET /hotelsScore/:rating
+//GET /hotelsScore
 const hotels_max_num_reviews = async function (req, res) {
-  const rating = req.params.rating;
   const sqlQuery = `
   SELECT
       hotel_name AS Hotel,
@@ -396,7 +395,7 @@ const search = async function (req, res) {
 module.exports = {
   hotels_with_best_categ_score,
   geographical_area,
-  hotels_score,
+  hotels_max_num_reviews,
   average_scores_by_month_year,
   average_scores_by_categories,
   reviews_per_hotel,

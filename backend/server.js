@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.get('/bestCategHotel', routes.hotels_with_best_categ_score);
 app.get('/geographicalArea', routes.geographical_area);
-app.get('/hotelsScore/:rating', routes.hotels_score);
+app.get('/hotelsScore', routes.hotels_max_num_reviews);
 app.get('/avgScoresMonth', routes.average_scores_by_month_year);
 app.get('/avgScoresCategories', routes.average_scores_by_categories);
 app.get('/reviews', routes.reviews_per_hotel);
