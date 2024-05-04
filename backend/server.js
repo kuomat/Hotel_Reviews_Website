@@ -11,7 +11,7 @@ app.use(cors())
 
 app.get('/bestCategHotel', routes.hotels_with_best_categ_score);
 app.get('/geographicalArea', routes.geographical_area);
-app.get('/hotelsScore/:rating', routes.hotels_score);
+app.get('/hotelsScore/:rating', routes.hotels_max_num_reviews);
 app.get('/avgScoresMonth', routes.average_scores_by_month_year);
 app.get('/:hotel/avgScoresCategories', routes.average_scores_by_categories);
 app.get('/:hotel/reviews', routes.reviews_per_hotel);

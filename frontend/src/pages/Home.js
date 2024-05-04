@@ -1,8 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import HotelComponent from '../components/HotelComponent';
+import {useState, useEffect} from 'react';
+import { Link } from '@mui/material';
+
+
 
 
 export default function NavigateButtons() {
+    const [selectedHotel, setSelectedHotel] = useState('');
     const navigate = useNavigate();
     
     const handleNavigation = (path) => {
@@ -23,7 +28,10 @@ export default function NavigateButtons() {
             <button onClick={() => handleNavigation('/page8')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Go to Page 8</button>
             <button onClick={() => handleNavigation('/page9')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Go to Page 9</button>
             <button onClick={() => handleNavigation('/page10')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Go to Page 10</button>
-            <HotelComponent hotelName={hotelName}></HotelComponent>
+            <Link onClick={() => setSelectedHotel(hotelName)}>
+                Belfast
+            </Link>
+            {selectedHotel && <HotelComponent hotelName={hotelName} handleClose={() => setSelectedHotel(null)} />}
         </div>
     );
 }

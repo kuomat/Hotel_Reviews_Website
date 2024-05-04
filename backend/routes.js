@@ -401,8 +401,8 @@ const search = async function (req, res) {
 module.exports = {
   hotels_with_best_categ_score,
   geographical_area,
-  hotels_score,
-  average_scores_by_month_year,
+  hotels_max_num_reviews,
+ average_scores_by_month_year,
   average_scores_by_categories,
   reviews_per_hotel,
   top_hotels,
