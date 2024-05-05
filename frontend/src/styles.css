@@ -23,6 +23,13 @@
     align-items: center;
 }
 
+.container2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
 .button {
     padding: 10px;
     border-radius: 5px;

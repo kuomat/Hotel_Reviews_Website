@@ -50,7 +50,7 @@ export default function MonthYear() {
     return (
         <div style={{padding: 40}}>
             <Navigation></Navigation>
-            <h1>Search By Month And Year</h1>
+            <div className='container'><h1>Search By Month And Year</h1></div>
             <div className="container">
                 {years.map((year, index) => (
                     <button style={{ marginRight: '10px' }} className="button" key={index} onClick={() => yearClick(year)}>{year}</button>
@@ -63,23 +63,32 @@ export default function MonthYear() {
                     ))
                 }
             </div>
-            <h3>
+            <div className='container' style={{marginBottom: "5px"}}><h2>
                 Selected Year: {selectedYear}
-            </h3>
-            <h3>
+            </h2></div>
+            <div className='container' style={{marginTop: "5px"}}><h2>
                 Selected Month: {months[selectedMonth-1]}
-            </h3>
-            <div>
-                {(selectedYear) &&
-                    hotels.map((hotel, index) => (
-                        <div key={index}>
-                            <Link onClick={() => setSelectedHotel(hotel.hotel_name)}>
-                                {hotel.hotel_name}
-                            </Link>
-                            <span>&nbsp;: {hotel.average_score}</span>
-                        </div>
-                    ))
-                }
+            </h2></div>
+            <div className='container'>
+                <div className='column'>
+                    <div className="header">Hotel Name</div>
+                    {(selectedYear) &&
+                        hotels.map((hotel, index) => (
+                            <div key={index}>
+                                <Link onClick={() => setSelectedHotel(hotel.hotel_name)}>
+                                    {hotel.hotel_name}
+                                </Link>
+                                {/* <span>&nbsp;: {hotel.average_score}</span> */}
+                            </div>
+                        ))
+                    }
+                </div>
+                <div className="column">
+                    <div className="header">Review Count</div>
+                    {hotels.map((item, index) => (
+                        <div key={index}>{item.average_score}</div>
+                    ))}
+                </div>
             </div>
             {selectedHotel && <HotelComponent hotelName={selectedHotel} handleClose={() => setSelectedHotel(null)} />}
         </div>

@@ -357,37 +357,31 @@ const top_hotels = async function (req, res) {
 // 12.5 seconds
 // GET /mostImproved
 const most_improved = async function (req, res) {
-  const sql = `SELECT
-  year_current.hotel_name,
-  (year_current.avg_overall_score - year_previous.avg_overall_score) AS overall_improvement,
-  (year_current.avg_service_score - year_previous.avg_service_score) AS service_improvement,
-  (year_current.avg_cleanliness_score - year_previous.avg_cleanliness_score) AS cleanliness_improvement,
-  (year_current.avg_value_score - year_previous.avg_value_score) AS value_improvement
+  const sql = `WITH YearlyScores AS (
+    SELECT
+        hotel_name,
+        YEAR(date) AS year,
+        AVG(overall_score) AS avg_overall_score,
+        AVG(service_score) AS avg_service_score,
+        AVG(cleanliness_score) AS avg_cleanliness_score,
+        AVG(value_score) AS avg_value_score
+    FROM joinedViewNewData1
+    GROUP BY hotel_name, YEAR(date)
+)
+SELECT
+    current.hotel_name,
+    (current.avg_overall_score - previous.avg_overall_score) AS overall_improvement,
+    (current.avg_service_score - previous.avg_service_score) AS service_improvement,
+    (current.avg_cleanliness_score - previous.avg_cleanliness_score) AS cleanliness_improvement,
+    (current.avg_value_score - previous.avg_value_score) AS value_improvement
 FROM
-  (SELECT
-      hotel_name,
-      YEAR(date) AS year,
-      AVG(overall_score) AS avg_overall_score,
-      AVG(service_score) AS avg_service_score,
-      AVG(cleanliness_score) AS avg_cleanliness_score,
-      AVG(value_score) AS avg_value_score
-   FROM joinedViewNewData1
-   GROUP BY hotel_name, YEAR(date)
-  ) year_current
+    YearlyScores current
 JOIN
-  (SELECT
-      hotel_name,
-      YEAR(date) AS year,
-      AVG(overall_score) AS avg_overall_score,
-      AVG(service_score) AS avg_service_score,
-      AVG(cleanliness_score) AS avg_cleanliness_score,
-      AVG(value_score) AS avg_value_score
-   FROM joinedViewNewData1
-   GROUP BY hotel_name, YEAR(date)
-  ) year_previous
-ON year_current.hotel_name = year_previous.hotel_name AND year_current.year = year_previous.year + 1
+    YearlyScores previous
+ON current.hotel_name = previous.hotel_name AND current.year = previous.year + 1
 ORDER BY overall_improvement DESC
 LIMIT 10;
+
 `;
 
   connection.query(sql, (err, results) => {

@@ -10,7 +10,6 @@ import Navigation from '../components/Navigation';
 
 
 export default function Signup() { 
-
     const [name, setName] = useState('');
     const [location, setLocation] = useState('');
     const [minRating, setMinRating] = useState('');
@@ -45,65 +44,68 @@ export default function Signup() {
     return (
         <div className='container'
             style={{padding: 40}}>
-            <Navigation></Navigation>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <div className='container'>
-                        <div className='flex space-x-4 items-center justify-between'>
-                            <label htmlFor="name" className='font-semibold'>Hotel Name: </label>
-                            <input
-                                id="name"
-                                type="text"
-                                className='outline-none bg-white rounded-md border border-slate-100 p-2'
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
+            <div className='container2'>
+                <div className='container'><Navigation></Navigation></div>
+                <form onSubmit={handleSubmit}>
+                    <div>
+                    
+                        <div className='container'>
+                            <div className='flex space-x-4 items-center justify-between'>
+                                <label htmlFor="name" className='font-semibold'>Hotel Name: </label>
+                                <input
+                                    id="name"
+                                    type="text"
+                                    className='outline-none bg-white rounded-md border border-slate-100 p-2'
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className='container'>
+                            <div className='flex space-x-4 items-center justify-between'>
+                                <label htmlFor="location" className='font-semibold'>Hotel Address: </label>
+                                <input
+                                    id="location"
+                                    type="text"
+                                    className='outline-none bg-white rounded-md border border-slate-100 p-2'
+                                    value={location}
+                                    onChange={(e) => setLocation(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className='container'>
+                            <div className='flex space-x-4 items-center justify-between'>
+                                <label htmlFor="minRating" className='font-semibold'>Specify the minimum rating of the hotel: </label>
+                                <input
+                                    id="minRating"
+                                    type="text"
+                                    className='outline-none bg-white rounded-md border border-slate-100 p-2'
+                                    value={minRating}
+                                    onChange={(e) => setMinRating(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className='container'>
+                            <div className='w-full flex justify-center'>
+                                <button type="submit" className='px-4 py-2 mt-2 rounded-md bg-indigo-500 outline-none font-bold text-white'>
+                                    Search
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div className='container'>
-                        <div className='flex space-x-4 items-center justify-between'>
-                            <label htmlFor="location" className='font-semibold'>Hotel Address: </label>
-                            <input
-                                id="location"
-                                type="text"
-                                className='outline-none bg-white rounded-md border border-slate-100 p-2'
-                                value={location}
-                                onChange={(e) => setLocation(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                    <div className='container'>
-                        <div className='flex space-x-4 items-center justify-between'>
-                            <label htmlFor="minRating" className='font-semibold'>Specify the minimum rating of the hotel: </label>
-                            <input
-                                id="minRating"
-                                type="text"
-                                className='outline-none bg-white rounded-md border border-slate-100 p-2'
-                                value={minRating}
-                                onChange={(e) => setMinRating(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                    <div className='container'>
-                        <div className='w-full flex justify-center'>
-                            <button type="submit" className='px-4 py-2 mt-2 rounded-md bg-indigo-500 outline-none font-bold text-white'>
-                                Search
-                            </button>
-                        </div>
-                    </div>
+                    <div className="column">
+                    {data.map((hotel, index) => (
+                            <div key={index}>
+                                <Link onClick={() => setSelectedHotel(hotel.hotel_name)}>
+                                    {hotel.hotel_name}
+                                </Link>
+                            </div>
+                        ))
+                    }
                 </div>
-                <div className="column">
-                {data.map((hotel, index) => (
-                        <div key={index}>
-                            <Link onClick={() => setSelectedHotel(hotel.hotel_name)}>
-                                {hotel.hotel_name}
-                            </Link>
-                        </div>
-                    ))
-                }
+                </form>
+                {selectedHotel && <HotelComponent hotelName={selectedHotel} handleClose={() => setSelectedHotel(null)} />}
             </div>
-            </form>
-            {selectedHotel && <HotelComponent hotelName={selectedHotel} handleClose={() => setSelectedHotel(null)} />}
         </div>
     );
 }

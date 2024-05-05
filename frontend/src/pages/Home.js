@@ -11,10 +11,8 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from 'recharts';
 
 
 
-
 export default function HomePage() {
     const [selectedHotel, setSelectedHotel] = useState('');
-    const navigate = useNavigate();
     const [distribution, setDistribution] = useState([]);
     const [mostImproved, setMostImproved] = useState([]);
     const [numReviews, setNumReviews] = useState([]);
