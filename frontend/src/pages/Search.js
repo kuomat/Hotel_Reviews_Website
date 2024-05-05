@@ -6,6 +6,8 @@ import { Link } from '@mui/material';
 import HotelComponent from '../components/HotelComponent';
 
 
+import Navigation from '../components/Navigation';
+
 
 export default function Signup() { 
 
@@ -41,7 +43,9 @@ export default function Signup() {
     };
 
     return (
-        <div className='container'>
+        <div className='container'
+            style={{padding: 40}}>
+            <Navigation></Navigation>
             <form onSubmit={handleSubmit}>
                 <div>
                     <div className='container'>

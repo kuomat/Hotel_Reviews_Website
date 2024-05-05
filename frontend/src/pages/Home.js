@@ -4,7 +4,11 @@ import axios from 'axios';
 import config from '../config.json';
 import "../styles.css";
 import HotelComponent from '../components/HotelComponent';
+import Navigation from '../components/Navigation';
+
 import { Link } from '@mui/material';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from 'recharts';
+
 
 
 
@@ -17,9 +21,9 @@ export default function HomePage() {
     const [review, setReview] = useState([]);
     const rootURL = config.serverRootURL;
 
-    const handleNavigation = (path) => {
-        navigate(path);
-    };
+    // const handleNavigation = (path) => {
+    //     navigate(path);
+    // };
 
     useEffect(() => {
         const fetchDataDistribution = async () => {//Route 10
@@ -62,26 +66,11 @@ export default function HomePage() {
     }, [rootURL]);
 
     return (
-        <div className='w-screen h-screen flex flex-col items-center justify-center space-y-4'>
-            <div className="container"><button onClick={() => handleNavigation('/search')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Search Hotel</button></div>
-            <div className="container"><button onClick={() => handleNavigation('/page2')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Go to Page 2</button></div>
+        <div style={{padding: 40}}>
+            <Navigation></Navigation>
+            {/* <div className="container"><button onClick={() => handleNavigation('/search')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Search Hotel</button></div>
+            <div className="container"><button onClick={() => handleNavigation('/MonthYear')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Search By Month/Year</button></div> */}
             <div className="flex">
-                <div className="container"><h2>Distribution</h2></div>
-                <div className="container">
-                    
-                    <div className="column">
-                        <div className="header">Overall Score</div>
-                        {distribution.map((item, index) => (
-                            <div key={index}>{item.overall_score}</div>
-                        ))}
-                    </div>
-                    <div className="column">
-                        <div className="header">Number of Reviews</div>
-                        {distribution.map((item, index) => (
-                            <div key={index}>{item.number_of_reviews}</div>
-                        ))}
-                    </div>
-                </div>
                 <div className="container"><h2>Most Improved</h2></div>
                 <div className="container">
                     <div className="column">
@@ -150,6 +139,20 @@ export default function HomePage() {
                             <div key={index}>{item.avg_score}</div>
                         ))}
                     </div>
+                </div>
+                <div className="container"><h2>Distribution</h2></div>
+                <div className="container">
+                    <ResponsiveContainer height={400}>
+                        <BarChart
+                            data={distribution}
+                            layout='horizontal'
+                            margin={{ left: 40 }}
+                        >
+                            <YAxis type='number' domain={[0, 1]} tickCount={10}/>
+                            <XAxis type='category' dataKey='overall_score' />
+                            <Bar dataKey='number_of_reviews' stroke='#8884d8' fill='#8884d8' />
+                        </BarChart>
+                    </ResponsiveContainer>
                 </div>
             </div>    
             {selectedHotel && <HotelComponent hotelName={selectedHotel} handleClose={() => setSelectedHotel(null)} />}
