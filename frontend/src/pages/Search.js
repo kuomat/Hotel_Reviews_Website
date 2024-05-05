@@ -10,6 +10,7 @@ import Navigation from '../components/Navigation';
 
 
 export default function Signup() { 
+
     const [name, setName] = useState('');
     const [location, setLocation] = useState('');
     const [minRating, setMinRating] = useState('');
@@ -42,70 +43,121 @@ export default function Signup() {
     };
 
     return (
-        <div className='container'
-            style={{padding: 40}}>
-            <div className='container2'>
-                <div className='container'><Navigation></Navigation></div>
-                <form onSubmit={handleSubmit}>
-                    <div>
-                    
-                        <div className='container'>
-                            <div className='flex space-x-4 items-center justify-between'>
-                                <label htmlFor="name" className='font-semibold'>Hotel Name: </label>
-                                <input
-                                    id="name"
-                                    type="text"
-                                    className='outline-none bg-white rounded-md border border-slate-100 p-2'
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                        <div className='container'>
-                            <div className='flex space-x-4 items-center justify-between'>
-                                <label htmlFor="location" className='font-semibold'>Hotel Address: </label>
-                                <input
-                                    id="location"
-                                    type="text"
-                                    className='outline-none bg-white rounded-md border border-slate-100 p-2'
-                                    value={location}
-                                    onChange={(e) => setLocation(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                        <div className='container'>
-                            <div className='flex space-x-4 items-center justify-between'>
-                                <label htmlFor="minRating" className='font-semibold'>Specify the minimum rating of the hotel: </label>
-                                <input
-                                    id="minRating"
-                                    type="text"
-                                    className='outline-none bg-white rounded-md border border-slate-100 p-2'
-                                    value={minRating}
-                                    onChange={(e) => setMinRating(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                        <div className='container'>
-                            <div className='w-full flex justify-center'>
-                                <button type="submit" className='px-4 py-2 mt-2 rounded-md bg-indigo-500 outline-none font-bold text-white'>
-                                    Search
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="column">
-                    {data.map((hotel, index) => (
-                            <div key={index}>
-                                <Link onClick={() => setSelectedHotel(hotel.hotel_name)}>
-                                    {hotel.hotel_name}
-                                </Link>
-                            </div>
-                        ))
-                    }
-                </div>
-                </form>
-                {selectedHotel && <HotelComponent hotelName={selectedHotel} handleClose={() => setSelectedHotel(null)} />}
+        <div style={{ padding: 40 }}>
+    <form onSubmit={handleSubmit} style={{ display: 'grid'}}>
+    <div className='container'><Navigation></Navigation></div>
+    <div className='container'><h1>Search Hotels</h1></div>
+    
+        <div className='container' style={{ display: 'grid', gap: '1rem'}}>
+            <div style={{ display: 'grid', gap: '0.5rem' }}>
+                <label htmlFor="name" style={{ fontWeight: 'bold', justifySelf: 'center' }}>Hotel Name</label>
+                <input
+                    id="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    style={{ border: '1px solid #ccc', borderRadius: '0.25rem', padding: '0.5rem', width: '400px' }}
+                />
+            </div>
+            <div style={{ display: 'grid', gap: '0.5rem' }}>
+                <label htmlFor="location" style={{ fontWeight: 'bold', justifySelf: 'center' }}>Location</label>
+                <input
+                    id="location"
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    style={{ border: '1px solid #ccc', borderRadius: '0.25rem', padding: '0.5rem', width: '400px' }}
+                />
+            </div>
+            <div style={{ display: 'grid', gap: '0.5rem' }}>
+                <label htmlFor="minRating" style={{ fontWeight: 'bold', justifySelf: 'center'  }}>Minimum Rating</label>
+                <input
+                    id="minRating"
+                    type="text"
+                    value={minRating}
+                    onChange={(e) => setMinRating(e.target.value)}
+                    style={{ border: '1px solid #ccc', borderRadius: '0.25rem', padding: '0.5rem', width: '400px' }}
+                />
             </div>
         </div>
+        <div className='container' style={{marginTop: '10px', marginBottom: '10px'}}>
+            <button type="submit" className='button'>
+                Search
+            </button>
+        </div>
+    </form>
+    <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(4, 1fr)', marginTop: '20px'}}>
+        {data.map((hotel, index) => (
+            <div key={index} style={{ border: '1px solid #ccc', borderRadius: '0.25rem', padding: '0.5rem' }}>
+                <Link onClick={() => setSelectedHotel(hotel.hotel_name)} style={{ color: '#007bff', cursor: 'pointer' }}>
+                    {hotel.hotel_name}
+                </Link>
+            </div>
+        ))}
+    </div>
+    {selectedHotel && <HotelComponent hotelName={selectedHotel} handleClose={() => setSelectedHotel(null)} />}
+</div>
+
+        // <div className='container'
+        //     style={{padding: 40}}>
+        //     <form onSubmit={handleSubmit} style={{ display: 'grid'}}>
+        //         <div>
+        //         <div className='container'><Navigation></Navigation></div>
+        //             <div className='container' style={{ display: 'grid', gap: '1rem'}}>
+        //                 <div style={{ display: 'grid', gap: '0.5rem' }}>
+        //                     <label htmlFor="name" style={{ fontWeight: 'bold', justifySelf: 'center' }}>Hotel Name</label>
+        //                     <input
+        //                         id="name"
+        //                         type="text"
+        //                         value={name}
+        //                         onChange={(e) => setName(e.target.value)}
+        //                         style={{ border: '1px solid #ccc', borderRadius: '0.25rem', padding: '0.5rem', width: '400px' }}
+        //                     />
+        //                 </div>
+        //             </div>
+        //             <div className='container' style={{ display: 'grid', gap: '0.5rem' }}>
+        //                 <div>
+        //                     <label htmlFor="location" style={{ fontWeight: 'bold', justifySelf: 'center' }}>Location</label>
+        //                     <input
+        //                         id="location"
+        //                         type="text"
+        //                         value={location}
+        //                         onChange={(e) => setLocation(e.target.value)}
+        //                         style={{ border: '1px solid #ccc', borderRadius: '0.25rem', padding: '0.5rem', width: '400px' }}
+        //                     />
+        //                 </div>
+        //             </div>
+        //             <div className='container'>
+        //                 <div>
+        //                     <label htmlFor="minRating">Specify the minimum rating of the hotel: </label>
+        //                     <input
+        //                         id="minRating"
+        //                         type="text"
+        //                         value={minRating}
+        //                         onChange={(e) => setMinRating(e.target.value)}
+        //                     />
+        //                 </div>
+        //             </div>
+        //             <div className='container'>
+        //                 <div>
+        //                     <button type="submit" className='button'>
+        //                         Search
+        //                     </button>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //         <div className="column">
+        //         {data.map((hotel, index) => (
+        //                 <div key={index}>
+        //                     <Link onClick={() => setSelectedHotel(hotel.hotel_name)}>
+        //                         {hotel.hotel_name}
+        //                     </Link>
+        //                 </div>
+        //             ))
+        //         }
+        //     </div>
+        //     </form>
+        //     {selectedHotel && <HotelComponent hotelName={selectedHotel} handleClose={() => setSelectedHotel(null)} />}
+        // </div>
     );
 }
