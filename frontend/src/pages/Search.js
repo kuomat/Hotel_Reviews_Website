@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import config from '../config.json';
 import "../styles.css";
+import Navigation from '../components/Navigation';
+
 
 export default function Signup() { 
 
@@ -34,7 +36,8 @@ export default function Signup() {
     };
 
     return (
-        <div className='w-screen h-screen flex items-center justify-center'>
+        <div style={{padding: 40}}>
+            <Navigation></Navigation>
             <form onSubmit={handleSubmit}>
                 <div>
                     <div className='container'>

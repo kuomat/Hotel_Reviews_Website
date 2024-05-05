@@ -3,6 +3,7 @@ import HotelComponent from '../components/HotelComponent';
 import {useState, useEffect} from 'react';
 import { Link } from '@mui/material';
 import axios from 'axios'; 
+import Navigation from '../components/Navigation';
 const config = require('../config.json');
 
 
@@ -17,10 +18,10 @@ export default function MonthYear() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                var response = await axios.get(`http://${config.server_host}:${config.server_port}/years`);
-                const yearsArr = response.data.map((data) => data.review_year);
-                setYears(yearsArr);
-                console.log(yearsArr);
+                // var response = await axios.get(`http://${config.server_host}:${config.server_port}/years`);
+                // const yearsArr = response.data.map((data) => data.review_year);
+                setYears([2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017]);
+                // console.log(yearsArr);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -31,6 +32,7 @@ export default function MonthYear() {
     }, []);
 
     const yearClick = async (year) => {
+        setSelectedMonth(null);
         setSelectedYear(year);
         var response = await axios.get(`http://${config.server_host}:${config.server_port}/tophotels/${year}`);
         const hotelsArr = response.data;
@@ -47,19 +49,26 @@ export default function MonthYear() {
 
     return (
         <div style={{padding: 40}}>
+            <Navigation></Navigation>
             <h1>Search By Month And Year</h1>
-            <div>
+            <div className="container">
                 {years.map((year, index) => (
-                    <button key={index} onClick={() => yearClick(year)}>{year}</button>
+                    <button style={{ marginRight: '10px' }} className="button" key={index} onClick={() => yearClick(year)}>{year}</button>
                 ))}
             </div>
-            <div>
+            <div className="container" style={{ marginTop: '10px'}}>
                 {(selectedYear) &&
                     months.map((month, index) => (
-                        <button key={index} onClick={() => monthClick(month)}>{month}</button>
+                        <button style={{ marginRight: '10px' }} className="button" key={index} onClick={() => monthClick(month)}>{month}</button>
                     ))
                 }
             </div>
+            <h3>
+                Selected Year: {selectedYear}
+            </h3>
+            <h3>
+                Selected Month: {months[selectedMonth-1]}
+            </h3>
             <div>
                 {(selectedYear) &&
                     hotels.map((hotel, index) => (
