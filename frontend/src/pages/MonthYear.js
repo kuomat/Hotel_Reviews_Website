@@ -63,12 +63,12 @@ export default function MonthYear() {
                     ))
                 }
             </div>
-            <div className='container' style={{ margin: '0px'}}><h2>
+            <div className='container'><div style={{fontSize: '1.5em', fontWeight: 'bold', marginTop: '20px'}}>
                 Selected Year: {selectedYear}
-            </h2></div>
-            <div className='container'><h2>
+            </div></div>
+            <div className='container'><div style={{fontSize: '1.5em', fontWeight: 'bold', marginTop: '10px', marginBottom: '20px'}}>
                 Selected Month: {months[selectedMonth-1]}
-            </h2></div>
+            </div></div>
             <div className='container'>
                 <div className='column'>
                     <div className="header">Hotel Name</div>
