@@ -3,14 +3,20 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import config from '../config.json';
 import "../styles.css";
+import HotelComponent from '../components/HotelComponent';
+import { Link } from '@mui/material';
+
+
 
 export default function HomePage() {
+    const [selectedHotel, setSelectedHotel] = useState('');
     const navigate = useNavigate();
     const [distribution, setDistribution] = useState([]);
     const [mostImproved, setMostImproved] = useState([]);
     const [numReviews, setNumReviews] = useState([]);
     const [review, setReview] = useState([]);
     const rootURL = config.serverRootURL;
+
     const handleNavigation = (path) => {
         navigate(path);
     };
@@ -32,9 +38,9 @@ export default function HomePage() {
                 console.error('Error fetching data:', error);
             }
         };
-        const fetchDataHotelNumReviews = async () => {//Route 7
+        const fetchDataHotelNumReviews = async () => {//Route 4
             try {
-                const response = await axios.get(`${rootURL}/reviews`);
+                const response = await axios.get(`${rootURL}/hotelsScore`);
                 setNumReviews(response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -57,8 +63,8 @@ export default function HomePage() {
 
     return (
         <div className='w-screen h-screen flex flex-col items-center justify-center space-y-4'>
-            <button onClick={() => handleNavigation('/page1')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Go to Page 1</button>
-            <button onClick={() => handleNavigation('/page2')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Go to Page 2</button>
+            <div className="container"><button onClick={() => handleNavigation('/search')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Search Hotel</button></div>
+            <div className="container"><button onClick={() => handleNavigation('/page2')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Go to Page 2</button></div>
             <div className="flex">
                 <div className="container"><h2>Distribution</h2></div>
                 <div className="container">
@@ -81,7 +87,11 @@ export default function HomePage() {
                     <div className="column">
                         <div className="header">Hotel Name</div>
                         {mostImproved.map((item, index) => (
-                            <div key={index}>{item.hotel_name}</div>
+                            <div key={index}>{
+                                <Link onClick={() => setSelectedHotel(item.hotel_name)}>
+                                    {item.hotel_name}
+                                </Link>}
+                            </div>
                         ))}
                     </div>
                     {/* <div className="column">
@@ -102,7 +112,11 @@ export default function HomePage() {
                     <div className="column">
                         <div className="header">Hotel Name</div>
                         {numReviews.map((item, index) => (
-                            <div key={index}>{item.hotel_name}</div>
+                            <div key={index}>{
+                                <Link onClick={() => setSelectedHotel(item.hotel_name)}>
+                                    {item.hotel_name}
+                                </Link>}
+                            </div>
                         ))}
                     </div>
                     <div className="column">
@@ -123,7 +137,11 @@ export default function HomePage() {
                     <div className="column">
                         <div className="header">Hotel Name</div>
                         {review.map((item, index) => (
-                            <div key={index}>{item.hotel_name}</div>
+                            <div key={index}>{
+                                <Link onClick={() => setSelectedHotel(item.hotel_name)}>
+                                    {item.hotel_name}
+                                </Link>}
+                            </div>
                         ))}
                     </div>
                     <div className="column">
@@ -133,8 +151,11 @@ export default function HomePage() {
                         ))}
                     </div>
                 </div>
-            </div>
-            
-       </div>
+            </div>    
+            {selectedHotel && <HotelComponent hotelName={selectedHotel} handleClose={() => setSelectedHotel(null)} />}
+        </div>
+        
+        
+        
     );
 }

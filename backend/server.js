@@ -14,11 +14,11 @@ app.get('/geographicalArea', routes.geographical_area);
 app.get('/hotelsScore', routes.hotels_max_num_reviews);
 app.get('/avgScoresMonth', routes.average_scores_by_month_year);
 app.get('/:hotel/avgScoresCategories', routes.average_scores_by_categories);
-app.get('/reviews', routes.reviews_per_hotel);
+app.get('/:hotel/reviews', routes.reviews_per_hotel);
 app.get('/tophotels/:year', routes.top_hotels);
 app.get('/mostImproved', routes.most_improved);
 app.get('/reviewDistribution', routes.distribution);
-app.get('/search', routes.search);
+app.post('/search', routes.search);
 app.get('/:hotelName', routes.hotel);
 
 // Start the server
