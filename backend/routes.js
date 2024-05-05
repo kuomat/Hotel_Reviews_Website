@@ -173,9 +173,11 @@ const hotels_max_num_reviews = async function (req, res) {
 
 // Route 5
 // 9 seconds
-// GET /avgScoresMonth
+// GET /avgScoresMonth/:year/:month
 const average_scores_by_month_year = async function (req, res) {
-  const sql = `SELECT
+  const year = req.params.year;
+  const month = req.params.month;
+  const sql = `WITH formattedDate AS (SELECT
     a.hotel_name,
     EXTRACT(YEAR FROM STR_TO_DATE(f.date, '%m/%d/%Y')) AS review_year,
     EXTRACT(MONTH FROM STR_TO_DATE(f.date, '%m/%d/%Y')) AS review_month,
@@ -189,8 +191,10 @@ const average_scores_by_month_year = async function (req, res) {
     review_year,
     review_month
   ORDER BY
+    average_score DESC,
     review_year,
-    review_month;
+    review_month)
+  SELECT * FROM formattedDate WHERE review_year='${year}' and review_month='${month}';
   `;
 
   connection.query(sql, (err, results) => {
@@ -203,6 +207,31 @@ const average_scores_by_month_year = async function (req, res) {
         review_year: result.review_year,
         review_month: result.review_month,
         average_score: result.average_score,
+      }));
+      res.status(200).json(mappedData);
+    }
+  });
+};
+
+// Route 5
+// 9 seconds
+// GET /years
+const get_years = async function (req, res) {
+  const sql = `SELECT
+    EXTRACT(YEAR FROM STR_TO_DATE(f.date, '%m/%d/%Y')) AS review_year
+    FROM
+    final_cleaned2 f
+    GROUP BY review_year
+    ORDER BY review_year;
+  `;
+
+  connection.query(sql, (err, results) => {
+    if (err) {
+      console.log(err);
+      res.status(404).json({ error: err });
+    } else {
+      const mappedData = results.map((result) => ({
+        review_year: result.review_year
       }));
       res.status(200).json(mappedData);
     }
@@ -278,13 +307,13 @@ const top_hotels = async function (req, res) {
   const year = req.params.year;
   const sql = `SELECT
     a.hotel_name,
-    COUNT(f.review) AS review_count,
+    AVG(f.overall_score) AS average_score,
     YEAR(STR_TO_DATE(f.date, '%m/%d/%Y')) AS review_year
     FROM address_cleaned2 a
     JOIN final_cleaned2 f ON a.address = f.address
     WHERE YEAR(STR_TO_DATE(f.date, '%m/%d/%Y')) = '${year}'
     GROUP BY a.hotel_name
-    ORDER BY review_count DESC
+    ORDER BY average_score DESC
     LIMIT 10;`;
 
   connection.query(sql, (err, results) => {
@@ -293,7 +322,7 @@ const top_hotels = async function (req, res) {
     } else {
       const mappedData = results.map((result) => ({
         hotel_name: result.hotel_name,
-        review_count: result.review_count,
+        average_score: result.average_score,
         review_year: result.review_year,
       }));
       res.status(200).json(mappedData);
@@ -402,14 +431,15 @@ module.exports = {
   hotels_with_best_categ_score,
   geographical_area,
   hotels_max_num_reviews,
- average_scores_by_month_year,
+  average_scores_by_month_year,
   average_scores_by_categories,
   reviews_per_hotel,
   top_hotels,
   most_improved,
   distribution,
   search,
-  hotel
+  hotel,
+  get_years
 };
 
 

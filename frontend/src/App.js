@@ -26,6 +26,8 @@
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
+import MonthYear from "./pages/MonthYear";
+
 
 
 
@@ -34,7 +36,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        
+        <Route path="/MonthYear" element={<MonthYear />} />
       </Routes>
     </BrowserRouter>
   )
