@@ -15,22 +15,22 @@ const ReviewComponent = ({ date, overall_score, service_score, cleanliness_score
                 Overall Score: {overall_score}
             </div>
             {(service_score && service_score.trim() !== '') &&
-                <span>Service Score: {service_score}</span>
+                <div>Service Score: {service_score}</div>
             }
             {(cleanliness_score && cleanliness_score.trim() !== '') &&
-                <span>Cleanliness Score: {cleanliness_score}</span>
+                <div>Cleanliness Score: {cleanliness_score}</div>
             }
             {(value_score && value_score.trim() !== '') &&
-                <span>Value Score: {value_score}</span>
+                <div>Value Score: {value_score}</div>
             }
             {(location_score && location_score.trim() !== '') &&
-                <span>Location Score: {location_score}</span>
+                <div>Location Score: {location_score}</div>
             }
             {(sleep_quality_score && sleep_quality_score.trim() !== '') &&
-                <span>Sleep Quality Score: {sleep_quality_score}</span>
+                <div>Sleep Quality Score: {sleep_quality_score}</div>
             }
             {(rooms_score && rooms_score.trim() !== '') &&
-                <span>Room Score: {rooms_score}</span>
+                <div>Room Score: {rooms_score}</div>
             }
             <div>{review}&nbsp;</div>
         </div>
@@ -52,14 +52,12 @@ export default function HotelComponent({ hotelName, handleClose }) {
                 console.log(namee);
              }
             try {
-                var response = await axios.get(`http://${config.server_host}:${config.server_port}/${hotelName}`);
+                var response = await axios.get(`http://${config.server_host}:${config.server_port}/hotel/${hotelName}`);
                 setHotelInfo(response.data);
                 var response = await axios.get(`http://${config.server_host}:${config.server_port}/${hotelName}/avgScoresCategories`);
                 setCategories(response.data[0]);      
                 var response = await axios.get(`http://${config.server_host}:${config.server_port}/${hotelName}/reviews`);
                 setReviewsCount(response.data[0]);
-                console.log(response.data[0]);        
-
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -74,12 +72,12 @@ export default function HotelComponent({ hotelName, handleClose }) {
         <Modal
         open={true}
         onClose={handleClose}
-        style={{ height: 400, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', overflow: 'hidden', marginTop: '50px'}}
+        style={{ height: 800, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', overflow: 'hidden', marginTop: '20px'}}
         >
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', overflow: 'hidden', paddingTop: '50px'}}>
         <Box
             p={3}
-            style={{ background: 'white', borderRadius: '16px', border: '2px solid #000', width: 600, overflowY: 'auto' }}
+            style={{ background: 'white', borderRadius: '16px', border: '2px solid #000', width: 900, overflowY: 'auto' }}
             >
             <h1>{hotelName}</h1>
             <h2>Average Overall Score: {categories.avg_overall_score}</h2>
