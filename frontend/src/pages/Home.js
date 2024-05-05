@@ -75,14 +75,16 @@ export default function HomePage() {
                 <div className="container"><h2>Most Improved</h2></div>
                 <div className="container">
                     <div className="column">
-                        <div className="header">Hotel Name</div>
-                        {mostImproved.map((item, index) => (
-                            <div key={index}>{
-                                <Link onClick={() => setSelectedHotel(item.hotel_name)}>
-                                    {item.hotel_name}
-                                </Link>}
-                            </div>
-                        ))}
+                        {/* <div className="container">Hotel Name</div> */}
+                        <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(4, 1fr)', marginTop: '10px'}}>
+                            {mostImproved.map((item, index) => (
+                                <div key={index} style={{ border: '1px solid #ccc', borderRadius: '0.25rem', padding: '0.5rem' }}>{
+                                    <Link onClick={() => setSelectedHotel(item.hotel_name)} style={{ color: '#007bff', cursor: 'pointer' }}>
+                                        {item.hotel_name}
+                                    </Link>}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                     {/* <div className="column">
                         <div className="header">Service Score</div>
