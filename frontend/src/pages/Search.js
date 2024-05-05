@@ -80,13 +80,13 @@ export default function Signup() {
                 />
             </div>
         </div>
-        <div className='container' style={{marginTop: '10px'}}>
+        <div className='container' style={{marginTop: '10px', marginBottom: '10px'}}>
             <button type="submit" className='button'>
                 Search
             </button>
         </div>
     </form>
-    <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(4, 1fr)' }}>
+    <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(4, 1fr)', marginTop: '20px'}}>
         {data.map((hotel, index) => (
             <div key={index} style={{ border: '1px solid #ccc', borderRadius: '0.25rem', padding: '0.5rem' }}>
                 <Link onClick={() => setSelectedHotel(hotel.hotel_name)} style={{ color: '#007bff', cursor: 'pointer' }}>
@@ -100,28 +100,30 @@ export default function Signup() {
 
         // <div className='container'
         //     style={{padding: 40}}>
-        //     <form onSubmit={handleSubmit}>
+        //     <form onSubmit={handleSubmit} style={{ display: 'grid'}}>
         //         <div>
         //         <div className='container'><Navigation></Navigation></div>
-        //             <div className='container'>
-        //                 <div>
-        //                     <label htmlFor="name">Hotel Name: </label>
+        //             <div className='container' style={{ display: 'grid', gap: '1rem'}}>
+        //                 <div style={{ display: 'grid', gap: '0.5rem' }}>
+        //                     <label htmlFor="name" style={{ fontWeight: 'bold', justifySelf: 'center' }}>Hotel Name</label>
         //                     <input
         //                         id="name"
         //                         type="text"
         //                         value={name}
         //                         onChange={(e) => setName(e.target.value)}
+        //                         style={{ border: '1px solid #ccc', borderRadius: '0.25rem', padding: '0.5rem', width: '400px' }}
         //                     />
         //                 </div>
         //             </div>
-        //             <div className='container'>
+        //             <div className='container' style={{ display: 'grid', gap: '0.5rem' }}>
         //                 <div>
-        //                     <label htmlFor="location">Hotel Address: </label>
+        //                     <label htmlFor="location" style={{ fontWeight: 'bold', justifySelf: 'center' }}>Location</label>
         //                     <input
         //                         id="location"
         //                         type="text"
         //                         value={location}
         //                         onChange={(e) => setLocation(e.target.value)}
+        //                         style={{ border: '1px solid #ccc', borderRadius: '0.25rem', padding: '0.5rem', width: '400px' }}
         //                     />
         //                 </div>
         //             </div>
