@@ -63,10 +63,10 @@ export default function MonthYear() {
                     ))
                 }
             </div>
-            <div className='container' style={{marginBottom: "5px"}}><h2>
+            <div className='container' style={{ margin: '0px'}}><h2>
                 Selected Year: {selectedYear}
             </h2></div>
-            <div className='container' style={{marginTop: "5px"}}><h2>
+            <div className='container'><h2>
                 Selected Month: {months[selectedMonth-1]}
             </h2></div>
             <div className='container'>
@@ -78,7 +78,6 @@ export default function MonthYear() {
                                 <Link onClick={() => setSelectedHotel(hotel.hotel_name)}>
                                     {hotel.hotel_name}
                                 </Link>
-                                {/* <span>&nbsp;: {hotel.average_score}</span> */}
                             </div>
                         ))
                     }
