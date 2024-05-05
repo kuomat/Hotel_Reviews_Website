@@ -68,6 +68,9 @@ export default function HomePage() {
     return (
         <div style={{padding: 40}}>
             <Navigation></Navigation>
+            <div className='container'>
+                <h1>Home</h1>
+            </div>
             {/* <div className="container"><button onClick={() => handleNavigation('/search')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Search Hotel</button></div>
             <div className="container"><button onClick={() => handleNavigation('/MonthYear')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Search By Month/Year</button></div> */}
             <div className="flex">
@@ -96,7 +99,7 @@ export default function HomePage() {
                         ))}
                     </div> */}
                 </div>
-                <div className="container"><h2>Number of Reviews</h2></div>
+                <div style={{marginTop: '10px'}} className="container"><h2>Most Reviewed</h2></div>
                 <div className="container">
                     <div className="column">
                         <div className="header">Hotel Name</div>
@@ -115,7 +118,7 @@ export default function HomePage() {
                         ))}
                     </div>
                 </div>
-                <div className="container"><h2>Hotel Reviews</h2></div>
+                <div style={{marginTop: '10px'}} className="container"><h2>Top Hotels</h2></div>
                 <div className="container">
                     <div className="column">
                         <div className="header">Category</div>
@@ -140,7 +143,7 @@ export default function HomePage() {
                         ))}
                     </div>
                 </div>
-                <div className="container"><h2>Distribution</h2></div>
+                <div style={{marginTop: '10px'}} className="container"><h2>Review Distribution</h2></div>
                 <div className="container">
                     <ResponsiveContainer height={400}>
                         <BarChart
