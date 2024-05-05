@@ -2,12 +2,19 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import config from '../config.json';
 import "../styles.css";
+import { Link } from '@mui/material';
+import HotelComponent from '../components/HotelComponent';
+
+
 
 export default function Signup() { 
 
     const [name, setName] = useState('');
     const [location, setLocation] = useState('');
     const [minRating, setMinRating] = useState('');
+    const [data, setData] = useState([]);
+    const [selectedHotel, setSelectedHotel] = useState('');
+    
     const rootURL = config.serverRootURL;
 
 
@@ -22,7 +29,7 @@ export default function Signup() {
             });
 
             if (response.status === 200) {
-                //on submit I want to display the results
+                setData(response.data);
             }
             
         } catch (error) {
@@ -34,7 +41,7 @@ export default function Signup() {
     };
 
     return (
-        <div className='w-screen h-screen flex items-center justify-center'>
+        <div className='container'>
             <form onSubmit={handleSubmit}>
                 <div>
                     <div className='container'>
@@ -81,7 +88,18 @@ export default function Signup() {
                         </div>
                     </div>
                 </div>
+                <div className="column">
+                {data.map((hotel, index) => (
+                        <div key={index}>
+                            <Link onClick={() => setSelectedHotel(hotel.hotel_name)}>
+                                {hotel.hotel_name}
+                            </Link>
+                        </div>
+                    ))
+                }
+            </div>
             </form>
+            {selectedHotel && <HotelComponent hotelName={selectedHotel} handleClose={() => setSelectedHotel(null)} />}
         </div>
     );
 }

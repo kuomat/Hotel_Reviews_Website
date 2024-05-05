@@ -235,11 +235,17 @@ const average_scores_by_month_year = async function (req, res) {
 // GET /years
 const get_years = async function (req, res) {
   const sql = `SELECT
-    EXTRACT(YEAR FROM STR_TO_DATE(f.date, '%m/%d/%Y')) AS review_year
-    FROM
-    final_cleaned2 f
-    GROUP BY review_year
-    ORDER BY review_year;
+  hotel_name,
+  review_year,
+  review_month,
+  ROUND(AVG(overall_score), 2) AS average_score
+FROM route5Table
+GROUP BY
+  hotel_name,
+  review_year,
+  review_month
+HAVING COUNT(*) > 15
+ORDER BY hotel_name, review_year, review_month;
   `;
 
   connection.query(sql, (err, results) => {
@@ -426,7 +432,7 @@ const search = async function (req, res) {
   const location = req.body.location;
   const minRating = req.body.minRating;
   console.log(name);
-  var sql = `SELECT a.hotel_name, a.address, f.overall_score
+  var sql = `SELECT DISTINCT a.hotel_name, a.address, f.overall_score
   FROM final_cleaned2 f JOIN address_cleaned2 a ON f.address = a.address WHERE`;
 
   if (!name && !location && !minRating) {
@@ -450,7 +456,13 @@ const search = async function (req, res) {
     sql = sql + ` f.overall_score >= ${minRating}`;
   }
 
-  sql = sql + ` ORDER BY f.overall_score DESC;`;
+  sql = sql + ` ORDER BY f.overall_score DESC LIMIT 100;`;
+
+  // if (name && !location && !minRating) {
+  //   sql = sql + ` LIMIT 1;`;
+  // } else {
+  //   sql = sql + `;`;
+  // }
 
   connection.query(sql, (err, results) => {
     if (err) {
