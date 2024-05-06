@@ -19,7 +19,8 @@ const hotel = async function (req, res) {
   const hotelName = req.params.hotelName;
   var sql = `SELECT * FROM final_cleaned2 f
   JOIN address_cleaned2 a ON f.address = a.address
-  WHERE a.hotel_name = '${hotelName}';`;
+  WHERE a.hotel_name = '${hotelName}'
+  LIMIT 1;`;
 
   connection.query(sql, (err, results) => {
     if (err) {
@@ -50,75 +51,75 @@ const hotels_with_best_categ_score = async function (req, res) {
 
     const sqlQuery = `
     WITH joined AS (
-        SELECT
-            hotel_name,
-            AVG(service_score) AS service_score,
-            AVG(cleanliness_score) AS cleanliness_score,
-            AVG(value_score) AS value_score,
-            AVG(location_score) AS location_score,
-            AVG(sleep_quality_score) AS sleep_quality_score,
-            AVG(rooms_score) AS room_score,
-            AVG(overall_score) AS overall_score
-        FROM joinedTable
-        GROUP BY hotel_name
-        HAVING COUNT(*) > 15
-    )
-    SELECT
-        category,
-        hotel_name,
-        avg_score
-    FROM
-        (
-            SELECT
-                'Service' AS category,
-                hotel_name,
-                service_score AS avg_score,
-                ROW_NUMBER() OVER (PARTITION BY 'Service' ORDER BY service_score DESC, hotel_name) AS rn
-            FROM joined
-            UNION ALL
-            SELECT
-                'Cleanliness' AS category,
-                hotel_name,
-                cleanliness_score AS avg_score,
-                ROW_NUMBER() OVER (PARTITION BY 'Cleanliness' ORDER BY cleanliness_score DESC, hotel_name) AS rn
-            FROM joined
-            UNION ALL
-            SELECT
-                'Value' AS category,
-                hotel_name,
-                value_score AS avg_score,
-                ROW_NUMBER() OVER (PARTITION BY 'Value' ORDER BY value_score DESC, hotel_name) AS rn
-            FROM joined
-            UNION ALL
-            SELECT
-                'Location' AS category,
-                hotel_name,
-                location_score AS avg_score,
-                ROW_NUMBER() OVER (PARTITION BY 'Location' ORDER BY location_score DESC, hotel_name) AS rn
-            FROM joined
-            UNION ALL
-            SELECT
-                'Sleep Quality' AS category,
-                hotel_name,
-                sleep_quality_score AS avg_score,
-                ROW_NUMBER() OVER (PARTITION BY 'Sleep Quality' ORDER BY sleep_quality_score DESC, hotel_name) AS rn
-            FROM joined
-            UNION ALL
-            SELECT
-                'Room' AS category,
-                hotel_name,
-                room_score AS avg_score,
-                ROW_NUMBER() OVER (PARTITION BY 'Room' ORDER BY room_score DESC, hotel_name) AS rn
-            FROM joined
-            UNION ALL
-            SELECT
-                'Overall' AS category,
-                hotel_name,
-                overall_score AS avg_score,
-                ROW_NUMBER() OVER (PARTITION BY 'Overall' ORDER BY overall_score DESC, hotel_name) AS rn
-            FROM joined
-        ) ranked
-    WHERE rn<=5;`;
+      SELECT
+          hotel_name,
+          AVG(service_score) AS service_score,
+          AVG(cleanliness_score) AS cleanliness_score,
+          AVG(value_score) AS value_score,
+          AVG(location_score) AS location_score,
+          AVG(sleep_quality_score) AS sleep_quality_score,
+          AVG(rooms_score) AS room_score,
+          AVG(overall_score) AS overall_score
+      FROM route2Table
+      GROUP BY hotel_name
+      HAVING COUNT(*) > 15
+  )
+  SELECT
+      category,
+      hotel_name,
+      avg_score
+  FROM
+      (
+          SELECT
+              'Service' AS category,
+              hotel_name,
+              service_score AS avg_score,
+              ROW_NUMBER() OVER (PARTITION BY 'Service' ORDER BY service_score DESC, hotel_name) AS rn
+          FROM joined
+          UNION ALL
+          SELECT
+              'Cleanliness' AS category,
+              hotel_name,
+              cleanliness_score AS avg_score,
+              ROW_NUMBER() OVER (PARTITION BY 'Cleanliness' ORDER BY cleanliness_score DESC, hotel_name) AS rn
+          FROM joined
+          UNION ALL
+          SELECT
+              'Value' AS category,
+              hotel_name,
+              value_score AS avg_score,
+              ROW_NUMBER() OVER (PARTITION BY 'Value' ORDER BY value_score DESC, hotel_name) AS rn
+          FROM joined
+          UNION ALL
+          SELECT
+              'Location' AS category,
+              hotel_name,
+              location_score AS avg_score,
+              ROW_NUMBER() OVER (PARTITION BY 'Location' ORDER BY location_score DESC, hotel_name) AS rn
+          FROM joined
+          UNION ALL
+          SELECT
+              'Sleep Quality' AS category,
+              hotel_name,
+              sleep_quality_score AS avg_score,
+              ROW_NUMBER() OVER (PARTITION BY 'Sleep Quality' ORDER BY sleep_quality_score DESC, hotel_name) AS rn
+          FROM joined
+          UNION ALL
+          SELECT
+              'Room' AS category,
+              hotel_name,
+              room_score AS avg_score,
+              ROW_NUMBER() OVER (PARTITION BY 'Room' ORDER BY room_score DESC, hotel_name) AS rn
+          FROM joined
+          UNION ALL
+          SELECT
+              'Overall' AS category,
+              hotel_name,
+              overall_score AS avg_score,
+              ROW_NUMBER() OVER (PARTITION BY 'Overall' ORDER BY overall_score DESC, hotel_name) AS rn
+          FROM joined
+      ) ranked
+  WHERE rn<= 5;`;
 
   connection.query(sqlQuery, (err, results) => {
     if (err || results.length === 0) {
@@ -381,6 +382,7 @@ JOIN
 ON current.hotel_name = previous.hotel_name AND current.year = previous.year + 1
 ORDER BY overall_improvement DESC
 LIMIT 10;
+
 
 `;
 
