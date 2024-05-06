@@ -83,7 +83,7 @@ export default function MonthYear() {
                     }
                 </div>
                 <div className="column">
-                    <div className="header">Review Count</div>
+                    <div className="header">Average Score</div>
                     {hotels.map((item, index) => (
                         <div key={index}>{item.average_score}</div>
                     ))}

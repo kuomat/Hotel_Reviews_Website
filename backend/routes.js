@@ -198,7 +198,7 @@ const average_scores_by_month_year = async function (req, res) {
     a.hotel_name,
     EXTRACT(YEAR FROM STR_TO_DATE(f.date, '%m/%d/%Y')) AS review_year,
     EXTRACT(MONTH FROM STR_TO_DATE(f.date, '%m/%d/%Y')) AS review_month,
-    AVG(f.overall_score) AS average_score
+    CASE WHEN AVG(f.overall_score) > 5 THEN AVG(f.overall_score) ELSE AVG(f.overall_score) + 5 END AS average_score
   FROM
     address_cleaned2 a
   JOIN
@@ -330,10 +330,10 @@ const top_hotels = async function (req, res) {
   const year = req.params.year;
   const sql = `SELECT
     a.hotel_name,
-    AVG(f.overall_score) AS average_score,
+    CASE WHEN AVG(f.overall_score) > 5 THEN AVG(f.overall_score) ELSE AVG(f.overall_score) + 5 END AS average_score,
     YEAR(STR_TO_DATE(f.date, '%m/%d/%Y')) AS review_year
     FROM address_cleaned2 a
-    JOIN final_cleaned2 f ON a.address = f.address
+    JOIN final_cleaned3 f ON a.address = f.address
     WHERE YEAR(STR_TO_DATE(f.date, '%m/%d/%Y')) = '${year}'
     GROUP BY a.hotel_name
     ORDER BY average_score DESC
@@ -402,7 +402,7 @@ LIMIT 10;
 // GET /reviewDistribution
 const distribution = async function (req, res) {
   const sql = `SELECT f.overall_score, COUNT(*) AS number_of_reviews
-  FROM final_cleaned2 f
+  FROM final_cleaned3 f
   GROUP BY f.overall_score
   ORDER BY f.overall_score;`;
 

@@ -49,7 +49,7 @@ export default function HotelComponent({ hotelName, handleClose }) {
             let namee = hotelName;
             if (typeof hotelName !== "undefined") {
                 namee = hotelName;
-                console.log(namee);
+                // console.log(namee);
              }
             try {
                 var response = await axios.get(`http://${config.server_host}:${config.server_port}/hotel/${hotelName}`);

@@ -67,7 +67,7 @@ export default function HomePage() {
         <div style={{padding: 40}}>
             <Navigation></Navigation>
             <div className='container'>
-                <h1>Home</h1>
+                <h1>Hotel Reviews</h1>
             </div>
             {/* <div className="container"><button onClick={() => handleNavigation('/search')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Search Hotel</button></div>
             <div className="container"><button onClick={() => handleNavigation('/MonthYear')} className='px-4 py-2 rounded-md bg-blue-500 text-white'>Search By Month/Year</button></div> */}
