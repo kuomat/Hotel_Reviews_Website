@@ -2,7 +2,7 @@
 CIS 5500 project
 
 To start the project you need to open 2 terminals:
--You need to cd into frontend and run npm run start
+-You need to cd into frontend and run npm start
 -You need to cd into frontend and run npm start
 
 The package.json for backend looks like the following:
